@@ -2,7 +2,6 @@
 import heapq
 with open("input/day15.txt") as f:
     lines = [list(map(int, line)) for line in f.read().rstrip().split("\n")]
-    destination = len(lines[-1]) - 1, len(lines) - 1
 
 def is_valid(lines, x, y):
     if not (0 <= y < len(lines) and 0 <= x < len(lines[y])):
@@ -22,6 +21,7 @@ def get_adjacent(lines, x, y):
             yield y1, x1
 
 def shortest_distance(lines):
+    destination = len(lines[-1]) - 1, len(lines) - 1
     heap = [(0, (0, 0))] # tuple compared position by position
     seen = {(0, 0)} # prevent visited more than one time
     while heap:
@@ -35,4 +35,23 @@ def shortest_distance(lines):
             heapq.heappush(heap, (dist + lines[_y][_x], (_y, _x)))
             seen.add((_y,_x))
 
-print(shortest_distance(lines))
+def scaling(times, datas):
+    expand_data = [line * times for line in datas * times]
+    height = len(datas)
+    width = len(datas[0])
+    expand_height = len(expand_data)
+    expand_width = len(expand_data[0])
+    for i in range(expand_height):
+        for j in range(expand_width):
+            expand_data[i][j] = (expand_data[i][j] + i // height + j // width - 1) % 9 + 1
+    return expand_data
+
+answer_1 = shortest_distance(lines)
+
+new_lines = scaling(5, lines)
+
+print(answer_1)
+
+answer_2 = shortest_distance(new_lines)
+
+print(answer_2)
